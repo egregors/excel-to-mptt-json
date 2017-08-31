@@ -99,3 +99,11 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# docs
+*.xlsx
+*.XLS
+
+#idea
+.idea/
+.idea/*
