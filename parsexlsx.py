@@ -1,17 +1,23 @@
 from openpyxl import load_workbook
+from functools import reduce
 
 wb = load_workbook(filename='1.xlsx')
 ws = wb.active
 
-c = {}
-for y, row in enumerate(ws['A3':'D10']):
+# replace all none cells with upper cell, by column
+for col in ws.iter_cols():
     tmp = ''
-    for x,cell in enumerate(row):
+    for cell in col:
         if not cell.value:
-            tmp += '='
-        # tmp = cell.value
-        if cell.value:
-            print(x, y,tmp, cell.value)
+            cell.value = tmp
+        else:
+            tmp = cell.value
 
-#print(ws.calculate_dimension())
-#print(ws.max_row,ws.max_column)
+# read to check
+for row in ws.iter_rows(min_row=3, max_col=4, max_row=3):  # debug on one row
+    c = []
+    for cell in row:
+        c.append(cell.value)
+    print(c)
+    d = reduce(lambda x, y: {y: x}, reversed(c + ['']))
+    print(d)
