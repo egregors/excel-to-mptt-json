@@ -15,6 +15,7 @@ def _get_scale(excel_list: list, title: str, lvl: int, title_line: int = 2) -> (
     :param title: category title to search
     :param lvl: level to search
     :param title_line: first useful row
+
     :return: tuple with first and second row id
     """
     begin, end = None, None
@@ -52,12 +53,12 @@ def _get_ch(excel_list: list, title_slice: tuple, lvl, nesting):
     :param title_slice: root category slice
     :param lvl: current level
     :param nesting: number nested levels
+
     :return: list with children with children with children lol ;D
     """
     a, b = title_slice
     r = []
     if a == b and excel_list[a][lvl] is not None:
-        print('тут для {} {}'.format(a, b))
         r.append({
             'title': excel_list[a][lvl],
             'children': []
