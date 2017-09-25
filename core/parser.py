@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 __all__ = ['parse', ]
 
 
-def _get_scale(excel_list: list, title: str, lvl: int, title_line: int = 2) -> (int, int):
+def _get_scale(excel_list: list, title: str, lvl: int, title_line: int = 2, end_line: int = None) -> (int, int):
     """ Get slice for root category
     :param excel_list: excel data
     :param title: category title to search
@@ -22,16 +22,18 @@ def _get_scale(excel_list: list, title: str, lvl: int, title_line: int = 2) -> (
 
     log.info('TRY TO FIND: {} on LVL {}'.format(title, lvl))
 
-    for idx in range(title_line, len(excel_list)):
+    end_line = len(excel_list) if end_line is None else end_line + 1
+
+    for idx in range(title_line, end_line):
         if excel_list[idx][lvl] == title:
             log.info('OK: {} [id: {}; lvl: {}]'.format(title, idx, lvl))
             begin = idx
-            if begin == len(excel_list) - 1:
+            if begin == end_line - 1:
                 log.info('FIND LAZY SLICE FOR {}: [{}:{}]'.format(title, begin, begin))
                 return begin, begin
 
-            for x in range(idx + 1, len(excel_list)):
-                if x == len(excel_list) - 1:
+            for x in range(idx + 1, end_line):
+                if x == end_line - 1:
                     end = x
                     log.info('FIND END SLICE FOR {}: [{}:{}]'.format(title, begin, end))
                     return begin, end
@@ -71,7 +73,7 @@ def _get_ch(excel_list: list, title_slice: tuple, lvl, nesting):
                     'children': _get_ch(
                         excel_list,
                         _get_scale(
-                            excel_list, excel_list[x][lvl], lvl), lvl + 1, nesting
+                            excel_list, excel_list[x][lvl], lvl, a, b), lvl + 1, nesting
                     ) if lvl + 1 <= nesting else []
                 })
 
