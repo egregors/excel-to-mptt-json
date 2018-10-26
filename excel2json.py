@@ -14,6 +14,7 @@ parser.add_argument('-t', '--title', help='first useful line', type=int, default
 parser.add_argument('-n', '--nesting', help='number nested levels', type=int, default=2)
 parser.add_argument('-v', action='store_true', help='show INFO log')
 parser.add_argument('-O', '--output', help='save to file', type=str)
+parser.add_argument('-C', '--capitalize', action='store_true', help='Capitalize titles', default=False)
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -24,5 +25,10 @@ if __name__ == '__main__':
         log.error('You need to set Excel file path:\npython excel2json.py -f file_name.xlsx')
         raise ValueError('file is None')
 
-    res = parse(args.file, lvl=args.lvl, title_line=args.title, nesting=args.nesting)
+    def normalize(s: str) -> str:
+        # https://github.com/Egregors/excel-to-mptt-json/issues/1
+        return s.capitalize() if args.capitalize is True else s
+
+
+    res = parse(args.file, lvl=args.lvl, title_line=args.title, nesting=args.nesting, normalize=normalize)
     print(res, file=open('{}'.format(args.output), 'a') if args.output else stdout)

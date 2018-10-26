@@ -11,7 +11,7 @@ Tool to make MPTT-ready data list from Excel files
 python excel2json.py --help
 
 usage: excel2json.py [-h] [-f FILE] [-l LVL] [-t TITLE] [-n NESTING] [-v]
-                     [-O OUTPUT]
+                     [-O OUTPUT] [-C]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -24,10 +24,11 @@ optional arguments:
   -v                    show INFO log
   -O OUTPUT, --output OUTPUT
                         save to file
+  -C, --capitalize      Capitalize titles
 ```
 
 ## Usage
 ```
-    python excel2json.py -f Классификатор\ -\ Дрогери.xlsx -v -n 3 -O categories.py
+    python excel2json.py -f Классификатор\ -\ Дрогери.xlsx -v -C -n 3 -O categories.py
 ```
 Parse file "Классификатор Дрогери.xlsx" for 3 levels to categories.py with DEBUG output log

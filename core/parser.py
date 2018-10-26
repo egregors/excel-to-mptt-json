@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 import logging as log
+from typing import Callable
 
 from openpyxl import load_workbook
 
@@ -49,7 +50,7 @@ def _get_scale(excel_list: list, title: str, lvl: int, title_line: int = 2, end_
         raise ValueError("Can't find {}".format(title))
 
 
-def _get_ch(excel_list: list, title_slice: tuple, lvl, nesting):
+def _get_ch(excel_list: list, title_slice: tuple, lvl, nesting, normalize: Callable) -> list:
     """ Recursively get a list of children
     :param excel_list: excel data
     :param title_slice: root category slice
@@ -69,19 +70,20 @@ def _get_ch(excel_list: list, title_slice: tuple, lvl, nesting):
         for x in range(a, b):
             if excel_list[x][lvl] is not None:
                 r.append({
-                    'title': excel_list[x][lvl],
+                    'title': normalize(excel_list[x][lvl]),
                     'children': _get_ch(
                         excel_list,
                         _get_scale(
-                            excel_list, excel_list[x][lvl], lvl, a, b), lvl + 1, nesting
+                            excel_list, excel_list[x][lvl], lvl, a, b), lvl + 1, nesting, normalize
                     ) if lvl + 1 <= nesting else []
                 })
 
     return r
 
 
-def parse(wb_path: str, lvl: int, title_line: int, nesting: int) -> list:
+def parse(wb_path: str, lvl: int, title_line: int, nesting: int, normalize: Callable) -> list:
     """ Convert excel wb to MPTT ready list
+    :param normalize: normaliser function
     :param wb_path: path to Excel file
     :param lvl: root category level
     :param title_line: first useful row
@@ -97,11 +99,11 @@ def parse(wb_path: str, lvl: int, title_line: int, nesting: int) -> list:
             log.info('ROOT CAT: {} [{}:{}]'.format(excel_list[i][lvl], i, lvl))
             r.append(
                 {
-                    'title': excel_list[i][lvl],
+                    'title': normalize(excel_list[i][lvl]),
                     'children': _get_ch(
                         excel_list,
                         _get_scale(excel_list, excel_list[i][lvl], lvl),
-                        lvl + 1, nesting)
+                        lvl + 1, nesting, normalize)
                 }
             )
 
